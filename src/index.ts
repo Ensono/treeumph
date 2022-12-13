@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import { App, BotMessageEvent } from "@slack/bolt";
-import { plantTree } from "./api/more-trees";
+import { plantTree, getCarbonOffset } from "./api/more-trees";
 dotenv.config();
 
 const PORT: number =
@@ -10,12 +10,30 @@ const PORT: number =
 // @TODO: Update this to be the id for the BOB HR Bot
 const BOT_USER_ID = process.env.SLACK_BOT_ID;
 
+const tree = ":deciduous_tree:";
+
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
   signingSecret: process.env.SLACK_SIGNING_SECRET,
   socketMode: true,
   appToken: process.env.SLACK_APP_TOKEN,
   port: isNaN(PORT) ? 3000 : PORT,
+});
+
+app.command("/treeumph", async ({ command, ack, say }) => {
+  switch(command.text) {
+    case "carbon": {
+      const res = await getCarbonOffset();
+      if (res) {
+        const { data } = res;
+        await say(`${tree} ${process.env.COMPANY_NAME} have offset ${Math.ceil(data.total_carbon_offset * 100) / 100}t of carbon ${tree}`);
+      }
+      break;
+    }
+    default: {
+      await say("You're barking up the wrong tree with that command! Try `/treeumph carbon` to view total carbon offset or `/treeumph forest` to view the virtual forest")
+    }
+  }
 });
 
 app.message("New shoutout from", async ({ message, say }) => {

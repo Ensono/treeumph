@@ -23,10 +23,13 @@ export const getForest = async (): Promise<Forest> => {
   return response.data;
 };
 
-export const getCarbonOffset = async (): Promise<CarbonOffset> => {
-  const response = await moreTreesApi.get("/carbonOffset");
-  console.log(response);
-  return response.data;
+export const getCarbonOffset = async (): ApiResponse<CarbonOffset> => {
+  try {
+    const response = await moreTreesApi.get("/carbonOffset");
+    return response.data;
+  } catch (err) {
+    logger.error(`/carbonOffset: ${err.message}`);
+  }
 };
 
 export const plantTree = async (): ApiResponse<PlantTree> => {
