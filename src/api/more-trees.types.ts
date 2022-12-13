@@ -18,7 +18,7 @@ export type Forest = Pick<
 export interface CarbonOffset {
   data: {
     total_carbon_offset: number;
-  }
+  };
 }
 
 export interface TreeCertificate {

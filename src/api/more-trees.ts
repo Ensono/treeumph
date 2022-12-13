@@ -2,7 +2,13 @@ import dotenv from "dotenv";
 dotenv.config();
 import axios from "axios";
 import logger from "../utils/logger";
-import type { AccountInfo, Forest, CarbonOffset, ApiResponse, PlantTree } from "./more-trees.types";
+import type {
+  AccountInfo,
+  Forest,
+  CarbonOffset,
+  ApiResponse,
+  PlantTree,
+} from "./more-trees.types";
 
 const moreTreesApi = axios.create({
   baseURL: "https://api.moretrees.eco/v1/basic",

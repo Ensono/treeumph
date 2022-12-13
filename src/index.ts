@@ -21,12 +21,16 @@ const app = new App({
 });
 
 app.command("/treeumph", async ({ command, ack, say }) => {
-  switch(command.text) {
+  switch (command.text) {
     case "carbon": {
       const res = await getCarbonOffset();
       if (res) {
         const { data } = res;
-        await say(`${tree} ${process.env.COMPANY_NAME} have offset ${Math.ceil(data.total_carbon_offset * 100) / 100}t of carbon ${tree}`);
+        await say(
+          `${tree} ${process.env.COMPANY_NAME} have offset ${
+            Math.ceil(data.total_carbon_offset * 100) / 100
+          }t of carbon ${tree}`,
+        );
       }
       break;
     }
@@ -34,12 +38,18 @@ app.command("/treeumph", async ({ command, ack, say }) => {
       const res = await getForest();
       if (res) {
         const { forest_url, quantity_gifted, quantity_planted } = res;
-        await say(`${tree} ${process.env.COMPANY_NAME} have planted ${quantity_planted + quantity_gifted} trees. View our virtual forest here: ${forest_url} ${tree}`);
+        await say(
+          `${tree} ${process.env.COMPANY_NAME} have planted ${
+            quantity_planted + quantity_gifted
+          } trees. View our virtual forest here: ${forest_url} ${tree}`,
+        );
       }
       break;
     }
     default: {
-      await say("You're barking up the wrong tree with that command! Try `/treeumph carbon` to view total carbon offset or `/treeumph forest` to view the virtual forest")
+      await say(
+        "You're barking up the wrong tree with that command! Try `/treeumph carbon` to view total carbon offset or `/treeumph forest` to view the virtual forest",
+      );
     }
   }
 });
