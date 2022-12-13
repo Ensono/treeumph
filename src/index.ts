@@ -6,9 +6,9 @@ dotenv.config();
 const PORT: number =
   process.env.PORT !== undefined ? parseInt(process.env.PORT) : 3000;
 
-// This is currently set to the id for the "CW Treeumph" bot in slack
-// @TODO: Update this to be the id for the BOB HR Bot
-const BOT_USER_ID = process.env.SLACK_BOT_ID;
+// This is currently set to the user id for the "CW Treeumph" bot in slack
+// @TODO: Update this to be the user id for the BOB HR Bot
+const BOT_USER_ID = process.env.SLACK_BOT_USER_ID;
 
 const tree = ":deciduous_tree:";
 
@@ -58,6 +58,7 @@ app.command("/treeumph", async ({ command, ack, say }) => {
 
 app.message("New shoutout from", async ({ message, say }) => {
   const botMessage = message as BotMessageEvent;
+  console.log(botMessage);
   if (botMessage.user === BOT_USER_ID) {
     const res = await plantTree();
     if (res) {
