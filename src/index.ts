@@ -1,9 +1,14 @@
 import dotenv from "dotenv";
 import { App, BotMessageEvent } from "@slack/bolt";
+import { plantTree } from "./api/more-trees";
 dotenv.config();
 
 const PORT: number =
   process.env.PORT !== undefined ? parseInt(process.env.PORT) : 3000;
+
+// This is currently set to the id for the "CW Treeumph" bot in slack
+// @TODO: Update this to be the id for the BOB HR Bot
+const BOT_USER_ID = process.env.SLACK_BOT_ID;
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
@@ -13,10 +18,18 @@ const app = new App({
   port: isNaN(PORT) ? 3000 : PORT,
 });
 
-app.message("ping", async ({ message, say }) => {
+app.message("New shoutout from", async ({ message, say }) => {
   const botMessage = message as BotMessageEvent;
-  if (botMessage.user !== undefined) {
-    await say(`pong <@${botMessage.user}>!`);
+  if (botMessage.user === BOT_USER_ID) {
+    const res = await plantTree();
+    if (res) {
+      await app.client.reactions.add({
+        token: process.env.SLACK_BOT_TOKEN,
+        name: "deciduous_tree",
+        channel: message.channel,
+        timestamp: message.ts,
+      });
+    }
   }
 });
 
@@ -26,5 +39,5 @@ const start = async (): Promise<void> => {
 };
 
 start().catch((error) => {
-  console.log("error: ", error);
+  console.log(`error starting app: ${error}`);
 });
