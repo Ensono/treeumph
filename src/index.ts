@@ -8,7 +8,7 @@ const PORT: number =
 
 // This is currently set to the id for the "CW Treeumph" bot in slack
 // @TODO: Update this to be the id for the BOB HR Bot
-const BOT_USER_ID = "U035JJL8F9S";
+const BOT_USER_ID = process.env.SLACK_BOT_ID;
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
@@ -18,25 +18,18 @@ const app = new App({
   port: isNaN(PORT) ? 3000 : PORT,
 });
 
-app.message("ping", async ({ message, say }) => {
-  const botMessage = message as BotMessageEvent;
-  if (botMessage.user !== undefined) {
-    await say(`pong <@${botMessage.user}>!`);
-  }
-});
-
 app.message("New shoutout from", async ({ message, say }) => {
   const botMessage = message as BotMessageEvent;
   if (botMessage.user === BOT_USER_ID) {
     const res = await plantTree();
-    if (res instanceof Error) return;
-
-    await app.client.reactions.add({
-      token: process.env.SLACK_BOT_TOKEN,
-      name: "deciduous_tree",
-      channel: message.channel,
-      timestamp: message.ts,
-    });
+    if (res) {
+      await app.client.reactions.add({
+        token: process.env.SLACK_BOT_TOKEN,
+        name: "deciduous_tree",
+        channel: message.channel,
+        timestamp: message.ts,
+      });
+    }
   }
 });
 

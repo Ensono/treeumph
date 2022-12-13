@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import axios from "axios";
+import logger from "../utils/logger";
 
 const moreTreesApi = axios.create({
   baseURL: "https://api.moretrees.eco/v1/basic",
@@ -8,6 +9,8 @@ const moreTreesApi = axios.create({
     Authorization: process.env.MORE_TREES_API_KEY,
   },
 });
+
+type ApiResponse<T> = Promise<T | undefined>;
 
 interface AccountInfo {
   credits: number;
@@ -50,15 +53,15 @@ export const getCarbonOffset = async (): Promise<CarbonOffset> => {
   return response.data;
 };
 
-export const plantTree = async (): Promise<PlantTree | Error> => {
+export const plantTree = async (): ApiResponse<PlantTree> => {
   try {
     const response = await moreTreesApi.post("/planttree", {
       type_slug: "any_tree",
-      request_type: 0,
+      request_type: 1,
       quantity: 1,
     });
     return response.data;
   } catch (err) {
-    return new Error(err);
+    logger.error(`/planttree: ${err.message}`);
   }
 };
