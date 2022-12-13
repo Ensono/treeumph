@@ -39,5 +39,5 @@ const start = async (): Promise<void> => {
 };
 
 start().catch((error) => {
-  console.log("error: ", error);
+  console.log(`error starting app: ${error}`);
 });

@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import axios from "axios";
 import logger from "../utils/logger";
+import type { AccountInfo, Forest, CarbonOffset, ApiResponse, PlantTree } from "./more-trees.types";
 
 const moreTreesApi = axios.create({
   baseURL: "https://api.moretrees.eco/v1/basic",
@@ -9,31 +10,6 @@ const moreTreesApi = axios.create({
     Authorization: process.env.MORE_TREES_API_KEY,
   },
 });
-
-type ApiResponse<T> = Promise<T | undefined>;
-
-interface AccountInfo {
-  credits: number;
-  forest_name: string;
-  saved_co2: number;
-  forest_url: string;
-  quantity_planted: number;
-  quantity_gifted: number;
-  quantity_received: number;
-}
-
-type Forest = Pick<
-  AccountInfo,
-  "quantity_gifted" | "quantity_planted" | "forest_url"
->;
-
-interface CarbonOffset {
-  total_carbon_offset: number;
-}
-
-interface PlantTree {
-  response: string;
-}
 
 export const getInfo = async (): Promise<AccountInfo> => {
   const response = await moreTreesApi.get("/getInfo");
