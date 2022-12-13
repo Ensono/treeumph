@@ -1,17 +1,19 @@
 export type ApiResponse<T> = Promise<T | undefined>;
 
 export interface AccountInfo {
-  credits: number;
-  forest_name: string;
-  saved_co2: number;
-  forest_url: string;
-  quantity_planted: number;
-  quantity_gifted: number;
-  quantity_received: number;
+  data: {
+    credits: number;
+    forest_name: string;
+    saved_co2: number;
+    forest_url: string;
+    quantity_planted: number;
+    quantity_gifted: number;
+    quantity_received: number;
+  };
 }
 
 export type Forest = Pick<
-  AccountInfo,
+  AccountInfo["data"],
   "quantity_gifted" | "quantity_planted" | "forest_url"
 >;
 

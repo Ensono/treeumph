@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import axios from "axios";
 import logger from "../utils/logger";
+
 import type {
   AccountInfo,
   Forest,
@@ -28,7 +29,9 @@ export const getInfo = async (): ApiResponse<AccountInfo> => {
 
 export const getForest = async (): ApiResponse<Forest> => {
   const res = await getInfo();
-  return res;
+  if (res) {
+    return res.data;
+  }
 };
 
 export const getCarbonOffset = async (): ApiResponse<CarbonOffset> => {

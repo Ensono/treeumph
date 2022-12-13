@@ -21,6 +21,8 @@ const app = new App({
 });
 
 app.command("/treeumph", async ({ command, ack, say }) => {
+  await ack();
+
   switch (command.text) {
     case "carbon": {
       const res = await getCarbonOffset();
