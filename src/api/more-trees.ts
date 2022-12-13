@@ -2,7 +2,14 @@ import dotenv from "dotenv";
 dotenv.config();
 import axios from "axios";
 import logger from "../utils/logger";
-import type { AccountInfo, Forest, CarbonOffset, ApiResponse, PlantTree } from "./more-trees.types";
+
+import type {
+  AccountInfo,
+  Forest,
+  CarbonOffset,
+  ApiResponse,
+  PlantTree,
+} from "./more-trees.types";
 
 const moreTreesApi = axios.create({
   baseURL: "https://api.moretrees.eco/v1/basic",
@@ -11,22 +18,29 @@ const moreTreesApi = axios.create({
   },
 });
 
-export const getInfo = async (): Promise<AccountInfo> => {
-  const response = await moreTreesApi.get("/getInfo");
-  console.log(response);
-  return response.data;
+export const getInfo = async (): ApiResponse<AccountInfo> => {
+  try {
+    const response = await moreTreesApi.get("/getInfo");
+    return response.data;
+  } catch (err) {
+    logger.error(`/getInfo: ${err.message}`);
+  }
 };
 
-export const getForest = async (): Promise<Forest> => {
-  const response = await moreTreesApi.get("/getForest");
-  console.log(response);
-  return response.data;
+export const getForest = async (): ApiResponse<Forest> => {
+  const res = await getInfo();
+  if (res) {
+    return res.data;
+  }
 };
 
-export const getCarbonOffset = async (): Promise<CarbonOffset> => {
-  const response = await moreTreesApi.get("/carbonOffset");
-  console.log(response);
-  return response.data;
+export const getCarbonOffset = async (): ApiResponse<CarbonOffset> => {
+  try {
+    const response = await moreTreesApi.get("/carbonOffset");
+    return response.data;
+  } catch (err) {
+    logger.error(`/carbonOffset: ${err.message}`);
+  }
 };
 
 export const plantTree = async (): ApiResponse<PlantTree> => {
