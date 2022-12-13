@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import { App, BotMessageEvent } from "@slack/bolt";
-import { plantTree, getCarbonOffset } from "./api/more-trees";
+import { plantTree, getCarbonOffset, getForest } from "./api/more-trees";
 dotenv.config();
 
 const PORT: number =
@@ -27,6 +27,14 @@ app.command("/treeumph", async ({ command, ack, say }) => {
       if (res) {
         const { data } = res;
         await say(`${tree} ${process.env.COMPANY_NAME} have offset ${Math.ceil(data.total_carbon_offset * 100) / 100}t of carbon ${tree}`);
+      }
+      break;
+    }
+    case "forest": {
+      const res = await getForest();
+      if (res) {
+        const { forest_url, quantity_gifted, quantity_planted } = res;
+        await say(`${tree} ${process.env.COMPANY_NAME} have planted ${quantity_planted + quantity_gifted} trees. View our virtual forest here: ${forest_url} ${tree}`);
       }
       break;
     }

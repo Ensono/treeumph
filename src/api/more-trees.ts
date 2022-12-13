@@ -11,16 +11,18 @@ const moreTreesApi = axios.create({
   },
 });
 
-export const getInfo = async (): Promise<AccountInfo> => {
-  const response = await moreTreesApi.get("/getInfo");
-  console.log(response);
-  return response.data;
+export const getInfo = async (): ApiResponse<AccountInfo> => {
+  try {
+    const response = await moreTreesApi.get("/getInfo");
+    return response.data;
+  } catch (err) {
+    logger.error(`/getInfo: ${err.message}`);
+  }
 };
 
-export const getForest = async (): Promise<Forest> => {
-  const response = await moreTreesApi.get("/getForest");
-  console.log(response);
-  return response.data;
+export const getForest = async (): ApiResponse<Forest> => {
+  const res = await getInfo();
+  return res;
 };
 
 export const getCarbonOffset = async (): ApiResponse<CarbonOffset> => {
