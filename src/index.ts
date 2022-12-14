@@ -51,9 +51,9 @@ app.command("/treeumph", async ({ command, ack, say }) => {
 
 app.message("New shoutout from", async ({ message, say }) => {
   const botMessage = message as BotMessageEvent;
-  const count = await getEstimatedMonthlyTreeCount();
-  if (count <= MONTHLY_TREE_BUDGET) {
-    if (botMessage.user === BOT_USER_ID) {
+  if (botMessage.user === BOT_USER_ID) {
+    const count = await getEstimatedMonthlyTreeCount();
+    if (count <= MONTHLY_TREE_BUDGET) {
       const res = await plantTree();
       if (res) {
         await app.client.reactions.add({
@@ -63,15 +63,15 @@ app.message("New shoutout from", async ({ message, say }) => {
           timestamp: message.ts,
         });
       }
+    } else {
+      // @TODO: have better UX for when we hit the monthly budget
+      await app.client.reactions.add({
+        token: process.env.SLACK_BOT_TOKEN,
+        name: 'money_with_wings',
+        channel: message.channel,
+        timestamp: message.ts,
+      });
     }
-  } else {
-    // @TODO: have better UX for when we hit the monthly budget
-    await app.client.reactions.add({
-      token: process.env.SLACK_BOT_TOKEN,
-      name: 'money_with_wings',
-      channel: message.channel,
-      timestamp: message.ts,
-    });
   }
 });
 
