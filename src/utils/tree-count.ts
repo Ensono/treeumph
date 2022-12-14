@@ -3,7 +3,7 @@ import format from "date-fns/format";
 import startOfMonth from "date-fns/startOfMonth";
 import endOfMonth from "date-fns/endOfMonth";
 import app from "./slack-app";
-import { BOT_USER_ID, TREE_EMOJI_NAME } from "./constants";
+import { SLACK_BOT_USER_ID, TREE_EMOJI_NAME } from "./constants";
 import logger from "./logger";
 import { Match } from "@slack/web-api/dist/response/SearchMessagesResponse";
 
@@ -60,10 +60,10 @@ const getReaction = async (message: Match) => {
       timestamp: message.ts,
     });
 
-    if (reaction.message?.reactions?.length && BOT_USER_ID) {
+    if (reaction.message?.reactions?.length && SLACK_BOT_USER_ID) {
       const { users, name } = reaction.message.reactions[0];
 
-      if (users?.includes(BOT_USER_ID) && name === TREE_EMOJI_NAME) {
+      if (users?.includes(SLACK_BOT_USER_ID) && name === TREE_EMOJI_NAME) {
         return {
           ...message,
           reactions: reaction.message.reactions,

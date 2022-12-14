@@ -2,7 +2,7 @@ import { BotMessageEvent } from "@slack/bolt";
 import app from "./utils/slack-app";
 import { plantTree, getCarbonOffset, getForest } from "./api/more-trees";
 import { getEstimatedMonthlyTreeCount } from "./utils/tree-count";
-import { BOT_USER_ID, MONTHLY_TREE_BUDGET, TREE_EMOJI, TREE_EMOJI_NAME } from "./utils/constants";
+import { HR_BOT_USER_ID, MONTHLY_TREE_BUDGET, TREE_EMOJI, TREE_EMOJI_NAME } from "./utils/constants";
 
 app.command("/treeumph", async ({ command, ack, say }) => {
   await ack();
@@ -51,7 +51,7 @@ app.command("/treeumph", async ({ command, ack, say }) => {
 
 app.message("New shoutout from", async ({ message, say }) => {
   const botMessage = message as BotMessageEvent;
-  if (botMessage.user === BOT_USER_ID) {
+  if (botMessage.user === HR_BOT_USER_ID) {
     const count = await getEstimatedMonthlyTreeCount();
     if (count <= MONTHLY_TREE_BUDGET) {
       const res = await plantTree();
