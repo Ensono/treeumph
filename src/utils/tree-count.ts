@@ -50,7 +50,6 @@ export const getAllMessages = async (query: string) => {
   return allMessages;
 };
 
-
 // Get messages where the bot has reacted with a 🌳 emoji
 const getReaction = async (message: Match) => {
   if (message.ts && message.channel) {
@@ -71,7 +70,7 @@ const getReaction = async (message: Match) => {
       }
     }
   }
-}
+};
 
 /**
  * It should be noted that this function is not guaranteed to give us an accurate count of trees planted.
@@ -79,9 +78,7 @@ const getReaction = async (message: Match) => {
  * So this function will give us a rough estimate of how many trees have been planted in a current month
  * and we can then limit tree planting based on the set budget
  */
-export const getEstimatedMonthlyTreeCount = async (): Promise<
-  number
-> => {
+export const getEstimatedMonthlyTreeCount = async (): Promise<number> => {
   try {
     const startDate = format(startOfMonth(new Date()), "yyyy-MM-dd");
     const endDate = format(endOfMonth(new Date()), "yyyy-MM-dd");

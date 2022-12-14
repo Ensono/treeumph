@@ -2,7 +2,12 @@ import { BotMessageEvent } from "@slack/bolt";
 import app from "./utils/slack-app";
 import { plantTree, getCarbonOffset, getForest } from "./api/more-trees";
 import { getEstimatedMonthlyTreeCount } from "./utils/tree-count";
-import { HR_BOT_USER_ID, MONTHLY_TREE_BUDGET, TREE_EMOJI, TREE_EMOJI_NAME } from "./utils/constants";
+import {
+  HR_BOT_USER_ID,
+  MONTHLY_TREE_BUDGET,
+  TREE_EMOJI,
+  TREE_EMOJI_NAME,
+} from "./utils/constants";
 
 app.command("/treeumph", async ({ command, ack, say }) => {
   await ack();
@@ -35,9 +40,7 @@ app.command("/treeumph", async ({ command, ack, say }) => {
     case "monthlyCount": {
       const count = await getEstimatedMonthlyTreeCount();
       await say({
-        text: `${TREE_EMOJI} ${process.env.COMPANY_NAME} have planted ${
-          count
-        } trees this month ${TREE_EMOJI}. `,
+        text: `${TREE_EMOJI} ${process.env.COMPANY_NAME} have planted ${count} trees this month ${TREE_EMOJI}. `,
       });
       break;
     }
@@ -67,7 +70,7 @@ app.message("New shoutout from", async ({ message, say }) => {
       // @TODO: have better UX for when we hit the monthly budget
       await app.client.reactions.add({
         token: process.env.SLACK_BOT_TOKEN,
-        name: 'money_with_wings',
+        name: "money_with_wings",
         channel: message.channel,
         timestamp: message.ts,
       });
