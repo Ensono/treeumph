@@ -1,18 +1,26 @@
 {
+  "extends": "./tsconfig.paths.json",
   "compilerOptions": {
+    "lib": ["esnext"],
     "module": "commonjs",
+    "moduleResolution": "node",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es6",
+    "target": "ES2020",
     "noImplicitAny": true,
-    "moduleResolution": "node",
     "sourceMap": true,
-    "outDir": "dist",
-    "baseUrl": ".",
-    "paths": {
-      "*": ["node_modules/*"]
-    },
+    "outDir": "lib",
     "strictNullChecks": true
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*.ts", "serverless.ts"],
+  "exclude": [
+    "node_modules",
+    ".serverless/**/*",
+    ".webpack/**/*",
+    "_warmup/**/*",
+    ".vscode/**/*",
+  ],
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  }
 }
