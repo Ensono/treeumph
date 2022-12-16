@@ -27,6 +27,13 @@ export const getInfo = async (): ApiResponse<AccountInfo> => {
   }
 };
 
+export const getCredits = async (): ApiResponse<number> => {
+  const res = await getInfo();
+  if (res) {
+    return res.data.credits;
+  }
+};
+
 export const getForest = async (): ApiResponse<Forest> => {
   const res = await getInfo();
   if (res) {

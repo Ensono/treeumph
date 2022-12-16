@@ -1,14 +1,12 @@
 import { BotMessageEvent } from "@slack/bolt";
 import app from "./utils/slack-app";
-import { plantTree, getCarbonOffset, getForest } from "./api/more-trees";
-import { getEstimatedMonthlyTreeCount } from "./utils/tree-count";
 import {
-  HR_BOT_USER_ID,
-  MONTHLY_TREE_BUDGET,
-  TREE_EMOJI,
-  TREE_EMOJI_NAME,
-} from "./utils/constants";
-import logger from "./utils/logger";
+  plantTree,
+  getCarbonOffset,
+  getForest,
+  getCredits,
+} from "./api/more-trees";
+import { HR_BOT_USER_ID, TREE_EMOJI, TREE_EMOJI_NAME } from "./utils/constants";
 
 app.command("/treeumph", async ({ command, ack, say }) => {
   await ack();
@@ -38,11 +36,13 @@ app.command("/treeumph", async ({ command, ack, say }) => {
       }
       break;
     }
-    case "monthlyCount": {
-      const count = await getEstimatedMonthlyTreeCount();
-      await say({
-        text: `${TREE_EMOJI} ${process.env.COMPANY_NAME} have planted ${count} trees this month ${TREE_EMOJI}. `,
-      });
+    case "credits": {
+      const credits = await getCredits();
+      if (credits) {
+        await say(
+          `${TREE_EMOJI} ${process.env.COMPANY_NAME} have ${credits} credits left to plant trees ${TREE_EMOJI}`,
+        );
+      }
       break;
     }
     default: {
@@ -53,31 +53,35 @@ app.command("/treeumph", async ({ command, ack, say }) => {
   }
 });
 
-app.message("New shoutout from", async ({ message, say }) => {
+app.message(async ({ message, say }) => {
   const botMessage = message as BotMessageEvent;
-  if (botMessage.user === HR_BOT_USER_ID) {
-    const count = await getEstimatedMonthlyTreeCount();
-    if (count <= MONTHLY_TREE_BUDGET) {
-      const res = await plantTree();
-      if (res) {
+  const bobAttachment =
+    botMessage?.attachments?.filter(
+      (attachment) => attachment.footer === "bob Slack Integration",
+    ) || [];
+  if (botMessage.user === HR_BOT_USER_ID && bobAttachment.length) {
+    if (bobAttachment[0]?.pretext?.startsWith("New Shoutout from")) {
+      const credits = await getCredits();
+      if (credits) {
+        const res = await plantTree();
+        if (res) {
+          await app.client.reactions.add({
+            token: process.env.SLACK_BOT_TOKEN,
+            name: TREE_EMOJI_NAME,
+            channel: message.channel,
+            timestamp: message.ts,
+          });
+        }
+      } else {
+        // @TODO: have better UX for when we hit the monthly budget
         await app.client.reactions.add({
           token: process.env.SLACK_BOT_TOKEN,
-          name: TREE_EMOJI_NAME,
+          name: "money_with_wings",
           channel: message.channel,
           timestamp: message.ts,
         });
       }
-    } else {
-      // @TODO: have better UX for when we hit the monthly budget
-      await app.client.reactions.add({
-        token: process.env.SLACK_BOT_TOKEN,
-        name: "money_with_wings",
-        channel: message.channel,
-        timestamp: message.ts,
-      });
     }
-  } else {
-    logger.error("Message not from HR bot. Please make sure the HR bot is configured correctly.");
   }
 });
 
