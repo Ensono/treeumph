@@ -60,13 +60,16 @@ const getReaction = async (message: Match) => {
     });
 
     if (reaction.message?.reactions?.length && SLACK_BOT_USER_ID) {
-      const { users, name } = reaction.message.reactions[0];
+      const filteredReactions = reaction.message.reactions.filter(r => r.name === TREE_EMOJI_NAME && r.users?.includes(`${SLACK_BOT_USER_ID}`))
+      if (filteredReactions.length ) {
+        const { users, name } = filteredReactions[0];
 
-      if (users?.includes(SLACK_BOT_USER_ID) && name === TREE_EMOJI_NAME) {
-        return {
-          ...message,
-          reactions: reaction.message.reactions,
-        };
+        if (users?.includes(SLACK_BOT_USER_ID) && name === TREE_EMOJI_NAME) {
+          return {
+            ...message,
+            reactions: reaction.message.reactions,
+          };
+        }
       }
     }
   }
