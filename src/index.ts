@@ -8,6 +8,7 @@ import {
   TREE_EMOJI,
   TREE_EMOJI_NAME,
 } from "./utils/constants";
+import logger from "./utils/logger";
 
 app.command("/treeumph", async ({ command, ack, say }) => {
   await ack();
@@ -75,6 +76,8 @@ app.message("New shoutout from", async ({ message, say }) => {
         timestamp: message.ts,
       });
     }
+  } else {
+    logger.error("Message not from HR bot. Please make sure the HR bot is configured correctly.");
   }
 });
 
