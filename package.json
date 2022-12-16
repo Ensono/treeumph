@@ -28,6 +28,7 @@
     "@slack/bolt": "^3.12.2",
     "@types/dotenv": "^8.2.0",
     "axios": "^1.2.1",
+    "date-fns": "^2.29.3",
     "pino": "^8.7.0"
   },
   "devDependencies": {

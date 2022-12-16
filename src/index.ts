@@ -1,24 +1,12 @@
-import dotenv from "dotenv";
-import { App, BotMessageEvent } from "@slack/bolt";
-import { plantTree, getCarbonOffset, getForest } from "./api/more-trees";
-dotenv.config();
-
-const PORT: number =
-  process.env.PORT !== undefined ? parseInt(process.env.PORT) : 3000;
-
-// This is currently set to the user id for the "CW Treeumph" bot in slack
-// @TODO: Update this to be the user id for the BOB HR Bot
-const BOT_USER_ID = process.env.SLACK_BOT_USER_ID;
-
-const tree = ":deciduous_tree:";
-
-const app = new App({
-  token: process.env.SLACK_BOT_TOKEN,
-  signingSecret: process.env.SLACK_SIGNING_SECRET,
-  socketMode: true,
-  appToken: process.env.SLACK_APP_TOKEN,
-  port: isNaN(PORT) ? 3000 : PORT,
-});
+import { BotMessageEvent } from "@slack/bolt";
+import app from "./utils/slack-app";
+import {
+  plantTree,
+  getCarbonOffset,
+  getForest,
+  getCredits,
+} from "./api/more-trees";
+import { HR_BOT_USER_ID, TREE_EMOJI, TREE_EMOJI_NAME } from "./utils/constants";
 
 app.command("/treeumph", async ({ command, ack, say }) => {
   await ack();
@@ -29,9 +17,9 @@ app.command("/treeumph", async ({ command, ack, say }) => {
       if (res) {
         const { data } = res;
         await say(
-          `${tree} ${process.env.COMPANY_NAME} have offset ${
+          `${TREE_EMOJI} ${process.env.COMPANY_NAME} have offset ${
             Math.ceil(data.total_carbon_offset * 100) / 100
-          }t of carbon ${tree}`,
+          }t of carbon ${TREE_EMOJI}`,
         );
       }
       break;
@@ -41,9 +29,18 @@ app.command("/treeumph", async ({ command, ack, say }) => {
       if (res) {
         const { forest_url, quantity_gifted, quantity_planted } = res;
         await say(
-          `${tree} ${process.env.COMPANY_NAME} have planted ${
+          `${TREE_EMOJI} ${process.env.COMPANY_NAME} have planted ${
             quantity_planted + quantity_gifted
-          } trees. View our virtual forest here: ${forest_url} ${tree}`,
+          } trees. View our virtual forest here: ${forest_url} ${TREE_EMOJI}`,
+        );
+      }
+      break;
+    }
+    case "credits": {
+      const credits = await getCredits();
+      if (credits) {
+        await say(
+          `${TREE_EMOJI} ${process.env.COMPANY_NAME} have ${credits} credits left to plant trees ${TREE_EMOJI}`,
         );
       }
       break;
@@ -56,18 +53,34 @@ app.command("/treeumph", async ({ command, ack, say }) => {
   }
 });
 
-app.message("New shoutout from", async ({ message, say }) => {
+app.message(async ({ message, say }) => {
   const botMessage = message as BotMessageEvent;
-  console.log(botMessage);
-  if (botMessage.user === BOT_USER_ID) {
-    const res = await plantTree();
-    if (res) {
-      await app.client.reactions.add({
-        token: process.env.SLACK_BOT_TOKEN,
-        name: "deciduous_tree",
-        channel: message.channel,
-        timestamp: message.ts,
-      });
+  const bobAttachment =
+    botMessage?.attachments?.filter(
+      (attachment) => attachment.footer === "bob Slack Integration",
+    ) || [];
+  if (botMessage.user === HR_BOT_USER_ID && bobAttachment.length) {
+    if (bobAttachment[0]?.pretext?.startsWith("New Shoutout from")) {
+      const credits = await getCredits();
+      if (credits) {
+        const res = await plantTree();
+        if (res) {
+          await app.client.reactions.add({
+            token: process.env.SLACK_BOT_TOKEN,
+            name: TREE_EMOJI_NAME,
+            channel: message.channel,
+            timestamp: message.ts,
+          });
+        }
+      } else {
+        // @TODO: have better UX for when we hit the monthly budget
+        await app.client.reactions.add({
+          token: process.env.SLACK_BOT_TOKEN,
+          name: "money_with_wings",
+          channel: message.channel,
+          timestamp: message.ts,
+        });
+      }
     }
   }
 });
