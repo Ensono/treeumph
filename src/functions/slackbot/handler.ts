@@ -58,7 +58,6 @@ app.command("/treeumph", async ({ command, ack, say }) => {
 
 app.message("New shoutout from", async ({ message, say }) => {
   const botMessage = message as BotMessageEvent;
-  console.log(botMessage);
   if (botMessage.user === BOT_USER_ID) {
     const res = await plantTree();
     if (res) {
