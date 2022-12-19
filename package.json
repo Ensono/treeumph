@@ -3,15 +3,12 @@
   "version": "1.0.0",
   "description": "Repository to hold the app to donate and plant a tree for every Kudos given on Bob/Slack",
   "scripts": {
-    "start": "npm run build && node dist/index.js",
-    "build": "npm run lint && tsc",
-    "lint": "tsc --noEmit && npm run check && npm run format",
+    "lint": "npm run check && npm run format",
+    "lint:ci": "rome ci .",
     "check": "rome check .",
     "check:fix": "rome check . --apply",
     "format": "rome format .",
-    "format:fix": "rome format . --write",
-    "dev": "nodemon --exec ts-node src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "format:fix": "rome format . --write"
   },
   "repository": {
     "type": "git",
