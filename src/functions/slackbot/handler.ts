@@ -5,6 +5,7 @@ import {
   Callback,
 } from "aws-lambda";
 import { plantTree, getCarbonOffset, getForest } from "../../api/more-trees";
+import { COMPANY_NAME } from "src/utils/constants";
 
 // This is currently set to the user id for the "CW Treeumph" bot in slack
 // @TODO: Update this to be the user id for the BOB HR Bot
@@ -29,7 +30,7 @@ app.command("/treeumph", async ({ command, ack, say }) => {
       if (res) {
         const { data } = res;
         await say(
-          `${tree} ${process.env.COMPANY_NAME} have offset ${
+          `${tree} ${COMPANY_NAME} have offset ${
             Math.ceil(data.total_carbon_offset * 100) / 100
           }t of carbon ${tree}`,
         );
@@ -41,7 +42,7 @@ app.command("/treeumph", async ({ command, ack, say }) => {
       if (res) {
         const { forest_url, quantity_gifted, quantity_planted } = res;
         await say(
-          `${tree} ${process.env.COMPANY_NAME} have planted ${
+          `${tree} ${COMPANY_NAME} have planted ${
             quantity_planted + quantity_gifted
           } trees. View our virtual forest here: ${forest_url} ${tree}`,
         );
