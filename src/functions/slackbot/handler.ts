@@ -1,73 +1,56 @@
-import { App, AwsLambdaReceiver, BotMessageEvent } from "@slack/bolt";
+import { BotMessageEvent } from "@slack/bolt";
+import { app, awsLambdaReceiver } from "../../utils/slack-app";
 import {
   APIGatewayProxyEvent,
   APIGatewayProxyResult,
   Callback,
 } from "aws-lambda";
-import { plantTree, getCarbonOffset, getForest } from "../../api/more-trees";
-import { COMPANY_NAME } from "src/utils/constants";
-
-// This is currently set to the user id for the "CW Treeumph" bot in slack
-// @TODO: Update this to be the user id for the BOB HR Bot
-const BOT_USER_ID = process.env.SLACK_BOT_USER_ID;
-
-const tree = ":deciduous_tree:";
-
-const awsLambdaReceiver = new AwsLambdaReceiver({
-  signingSecret: `${process.env.SLACK_SIGNING_SECRET}`,
-});
-
-const app = new App({
-  token: `${process.env.SLACK_BOT_TOKEN}`,
-  receiver: awsLambdaReceiver,
-});
+import { getCredits } from "../../api/more-trees";
+import { HR_BOT_USER_ID } from "src/utils/constants";
+import {
+  carbonAction,
+  creditsAction,
+  defaultAction,
+  forestAction,
+  plantTreeAction,
+  treeLimitAction,
+} from "src/utils/actions";
 
 app.command("/treeumph", async ({ command, ack, say }) => {
   await ack();
   switch (command.text) {
     case "carbon": {
-      const res = await getCarbonOffset();
-      if (res) {
-        const { data } = res;
-        await say(
-          `${tree} ${COMPANY_NAME} have offset ${
-            Math.ceil(data.total_carbon_offset * 100) / 100
-          }t of carbon ${tree}`,
-        );
-      }
+      await carbonAction(say);
       break;
     }
     case "forest": {
-      const res = await getForest();
-      if (res) {
-        const { forest_url, quantity_gifted, quantity_planted } = res;
-        await say(
-          `${tree} ${COMPANY_NAME} have planted ${
-            quantity_planted + quantity_gifted
-          } trees. View our virtual forest here: ${forest_url} ${tree}`,
-        );
-      }
+      await forestAction(say);
+      break;
+    }
+    case "credits": {
+      await creditsAction(say);
       break;
     }
     default: {
-      await say(
-        "You're barking up the wrong tree with that command! Try `/treeumph carbon` to view total carbon offset or `/treeumph forest` to view the virtual forest",
-      );
+      await defaultAction(say);
     }
   }
 });
 
-app.message("New shoutout from", async ({ message, say }) => {
+app.message(async ({ message, say }) => {
   const botMessage = message as BotMessageEvent;
-  if (botMessage.user === BOT_USER_ID) {
-    const res = await plantTree();
-    if (res) {
-      await app.client.reactions.add({
-        token: process.env.SLACK_BOT_TOKEN,
-        name: "deciduous_tree",
-        channel: message.channel,
-        timestamp: message.ts,
-      });
+  const bobAttachment =
+    botMessage?.attachments?.filter(
+      (attachment) => attachment.footer === "bob Slack Integration",
+    ) || [];
+  if (botMessage.user === HR_BOT_USER_ID && bobAttachment.length) {
+    if (bobAttachment[0]?.pretext?.startsWith("New Shoutout from")) {
+      const credits = await getCredits();
+      if (credits) {
+        await plantTreeAction(message);
+      } else {
+        await treeLimitAction(say);
+      }
     }
   }
 });
