@@ -71,6 +71,7 @@ const limitMessages = [
 ];
 
 export const treeLimitAction = async (say: SayFn) => {
-  const randomLimitMessage = limitMessages[Math.floor(Math.random() * limitMessages.length)];
+  const randomLimitMessage =
+    limitMessages[Math.floor(Math.random() * limitMessages.length)];
   await say(`${randomLimitMessage}`);
 };
