@@ -63,16 +63,14 @@ export const plantTreeAction = async (message: MessageEvent) => {
   }
 };
 
+const limitMessages = [
+  `${TREE_EMOJI} Congrat-yew-lations we have reached the limit for tree planting this month. If you are pining for more make sure to give kudos next month ${TREE_EMOJI}`,
+  `${TREE_EMOJI} Branches of congratulations, we have reached our sapling limit for the month. If you're feeling a bit bark-y about it, make sure to give some kudos next month. ${TREE_EMOJI}`,
+  `${TREE_EMOJI} Leaf us congratulate you on reaching our tree planting threshold for the month. If you're feeling rooted in the desire for more, be sure to give your fellow Ensonians a shout-out next month! ${TREE_EMOJI}`,
+  `${TREE_EMOJI} It's time to raise a bark of congratulations, we've reached our tree planting limit for the month. If you're feeling a little green with envy, don't worry, there will be more opportunities to plant next month. ${TREE_EMOJI}`,
+];
+
 export const treeLimitAction = async (say: SayFn) => {
-  const res = await getForest();
-  if (res) {
-    const { forest_url, quantity_gifted, quantity_planted } = res;
-    await say(
-      `${TREE_EMOJI} Congrat-yew-lations we have reached the limit for tree planting this month. If you are pining for more make sure to give kudos next month ${TREE_EMOJI}\n${getForestMessage(
-        forest_url,
-        quantity_gifted,
-        quantity_planted,
-      )}`,
-    );
-  }
+  const randomLimitMessage = limitMessages[Math.floor(Math.random() * limitMessages.length)];
+  await say(`${randomLimitMessage}`);
 };
