@@ -10,7 +10,7 @@ const config: AWS = {
   plugins: ["serverless-esbuild", "serverless-offline"],
   provider: {
     name: "aws",
-    runtime: "nodejs14.x",
+    runtime: "nodejs18.x",
     apiGateway: {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true,
@@ -29,7 +29,7 @@ const config: AWS = {
       bundle: true,
       minify: true,
       sourcemap: true,
-      target: "node14",
+      target: "node18",
       exclude: ["aws-sdk"],
       define: { "require.resolve": undefined },
       platform: "node",
