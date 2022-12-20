@@ -7,7 +7,7 @@ import { slackbot } from "@functions/slackbot";
 const config: AWS = {
   service: "treeumph",
   frameworkVersion: "3",
-  plugins: ["serverless-esbuild", "serverless-offline"],
+  plugins: ["serverless-esbuild", "serverless-offline", "serverless-offline-watcher"],
   provider: {
     name: "aws",
     runtime: "nodejs18.x",
@@ -38,6 +38,12 @@ const config: AWS = {
       platform: "node",
       concurrency: 10,
     },
+    "serverless-offline-watcher": [
+      {
+        path: "src",
+        command: `echo "changes detected in src..."`
+      }
+    ]
   },
 };
 
