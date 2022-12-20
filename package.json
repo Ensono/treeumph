@@ -4,7 +4,6 @@
   "description": "Repository to hold the app to donate and plant a tree for every Kudos given on Bob/Slack",
   "scripts": {
     "lint": "npm run check && npm run format",
-    "lint:ci": "rome ci .",
     "check": "rome check .",
     "check:fix": "rome check . --apply",
     "format": "rome format .",
