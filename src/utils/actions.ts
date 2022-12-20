@@ -8,10 +8,14 @@ import {
 } from "../api/more-trees";
 import { TREE_EMOJI, TREE_EMOJI_NAME, COMPANY_NAME } from "./constants";
 
-const getForestMessage = (forest_url: string, quantity_gifted: number, quantity_planted: number) => {
+const getForestMessage = (
+  forest_url: string,
+  quantity_gifted: number,
+  quantity_planted: number,
+) => {
   return `${TREE_EMOJI} ${COMPANY_NAME} have planted ${
     quantity_planted + quantity_gifted
-  } trees. View our virtual forest here: ${forest_url} ${TREE_EMOJI}`
+  } trees. View our virtual forest here: ${forest_url} ${TREE_EMOJI}`;
 };
 
 export const forestAction = async (say: SayFn) => {
@@ -65,7 +69,11 @@ export const treeLimitAction = async (say: SayFn) => {
   if (res) {
     const { forest_url, quantity_gifted, quantity_planted } = res;
     await say(
-      `${TREE_EMOJI} Congrat-yew-lations we have reached the limit for tree planting this month. If you are pining for more make sure to give kudos next month ${TREE_EMOJI}\n${getForestMessage(forest_url, quantity_gifted, quantity_planted)}`,
+      `${TREE_EMOJI} Congrat-yew-lations we have reached the limit for tree planting this month. If you are pining for more make sure to give kudos next month ${TREE_EMOJI}\n${getForestMessage(
+        forest_url,
+        quantity_gifted,
+        quantity_planted,
+      )}`,
     );
   }
 };
