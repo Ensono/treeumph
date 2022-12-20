@@ -8,6 +8,9 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
       - uses: rome/setup-rome@v0.4
@@ -22,7 +25,7 @@ jobs:
       - run: npm ci
       - run: rome ci .
       - name: Setup AWS creds
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           aws-region: us-east-1
