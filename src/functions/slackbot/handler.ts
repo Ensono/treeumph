@@ -38,7 +38,6 @@ app.command("/treeumph", async ({ command, ack, say }) => {
 });
 
 app.message(async ({ message, say }) => {
-  console.log({ message: JSON.stringify(message, null, 2) });
   const botMessage = message as BotMessageEvent;
   const bobAttachment =
     botMessage?.attachments?.filter(

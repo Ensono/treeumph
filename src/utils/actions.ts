@@ -40,7 +40,6 @@ export const carbonAction = async (say: SayFn) => {
 
 export const creditsAction = async (say: SayFn) => {
   const credits = await getCredits();
-  console.log(credits);
   await say(
     `${TREE_EMOJI} ${COMPANY_NAME} have ${credits} credits left to plant trees ${TREE_EMOJI}`,
   );
