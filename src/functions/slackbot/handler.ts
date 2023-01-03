@@ -47,10 +47,7 @@ app.message(async ({ message, say }) => {
     ) || [];
   if (botMessage.user === HR_BOT_USER_ID && bobAttachment.length) {
     if (bobAttachment[0]?.pretext?.startsWith("New Shoutout from")) {
-      const s3 = new AWS.S3({
-        accessKeyId: process.env.IAM_ACCESS_KEY_ID,
-        secretAccessKey: process.env.IAM_ACCESS_SECRET,
-      });
+      const s3 = new AWS.S3();
       await kudosMessageAction(s3, S3_BUCKET_NAME, message, say);
     }
   }
