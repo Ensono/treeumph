@@ -14,7 +14,8 @@ const config: AWS = {
   ],
   provider: {
     name: "aws",
-    runtime: "nodejs18.x",
+    runtime: "nodejs16.x",
+    region: "us-east-1",
     apiGateway: {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true,
@@ -24,8 +25,6 @@ const config: AWS = {
       SLACK_BOT_TOKEN: `${process.env.SLACK_BOT_TOKEN}`,
       HR_BOT_USER_ID: `${process.env.HR_BOT_USER_ID}`,
       MORE_TREES_API_KEY: `${process.env.MORE_TREES_API_KEY}`,
-      IAM_ACCESS_KEY_ID: `${process.env.IAM_ACCESS_KEY_ID}`,
-      IAM_ACCESS_SECRET: `${process.env.IAM_ACCESS_SECRET}`,
       NODE_OPTIONS: "--enable-source-maps --stack-trace-limit=1000",
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
     },
@@ -37,7 +36,7 @@ const config: AWS = {
       treeumphBucket: {
         Type: "AWS::S3::Bucket",
         Properties: {
-          BucketName: "treeumph-bucket-store",
+          BucketName: "ensono-treeumph-bucket-store",
         },
       },
       treeumphBucketPolicy: {
@@ -127,7 +126,7 @@ const config: AWS = {
       bundle: true,
       minify: true,
       sourcemap: true,
-      target: "node18",
+      target: "node16",
       exclude: ["aws-sdk"],
       define: { "require.resolve": undefined },
       platform: "node",

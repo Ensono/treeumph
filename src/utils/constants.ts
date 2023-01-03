@@ -6,6 +6,6 @@ export const COMPANY_NAME = "Ensono Digital";
 // @TODO: Update this to be the user id for the BOB HR Bot
 export const HR_BOT_USER_ID = "U04FFG30QUV";
 export const MONTHLY_TREE_BUDGET = 30;
-export const S3_BUCKET_NAME = "treeumph-bucket-store";
+export const S3_BUCKET_NAME = "ensono-treeumph-bucket-store";
 export const TREE_EMOJI_NAME = "deciduous_tree";
 export const TREE_EMOJI = `:${TREE_EMOJI_NAME}:`;
