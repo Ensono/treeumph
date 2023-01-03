@@ -23,7 +23,9 @@
   "homepage": "https://github.com/amido/treeumph#readme",
   "dependencies": {
     "@slack/bolt": "^3.12.2",
+    "aws-sdk": "^2.1281.0",
     "axios": "^1.2.1",
+    "cfn-response": "^1.0.1",
     "date-fns": "^2.29.3",
     "pino": "^8.7.0"
   },
@@ -31,6 +33,7 @@
     "@serverless/typescript": "^3.25.0",
     "@types/aws-lambda": "^8.10.109",
     "@types/axios": "^0.14.0",
+    "@types/cfn-response": "^1.0.5",
     "@types/dotenv": "^8.2.0",
     "@types/node": "^18.11.15",
     "dotenv": "^16.0.3",

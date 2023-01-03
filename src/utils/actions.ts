@@ -1,12 +1,24 @@
-import { app } from "./slack-app";
 import { SayFn, MessageEvent } from "@slack/bolt";
+import { isSameMonth } from "date-fns";
 import {
   getForest,
   getCarbonOffset,
   getCredits,
   plantTree,
 } from "../api/more-trees";
-import { TREE_EMOJI, TREE_EMOJI_NAME, COMPANY_NAME } from "./constants";
+import {
+  COMPANY_NAME,
+  MONTHLY_TREE_BUDGET,
+  TREE_EMOJI,
+  TREE_EMOJI_NAME,
+} from "./constants";
+import {
+  uploadKudosObjectToS3Bucket,
+  getObjectFromS3Bucket,
+  IKudosCount,
+  listObjectsFromS3Bucket,
+} from "./S3-actions";
+import { app } from "./slack-app";
 
 const getForestMessage = (
   forest_url: string,
@@ -74,4 +86,71 @@ export const treeLimitAction = async (say: SayFn) => {
   const randomLimitMessage =
     limitMessages[Math.floor(Math.random() * limitMessages.length)];
   await say(`${randomLimitMessage}`);
+};
+
+export const kudosMessageAction = async (
+  s3Bucket: AWS.S3,
+  bucketName: string,
+  message: MessageEvent,
+  say: SayFn,
+) => {
+  const kudosObjectKey = "kudos-count.json";
+  const objectList = await listObjectsFromS3Bucket(s3Bucket, bucketName);
+  const kudosObject = objectList.find(
+    (object) => object?.Key === kudosObjectKey,
+  );
+  const currentDate = new Date();
+  const kudosCountObject: IKudosCount = {
+    count: 1,
+    date: currentDate.toISOString(),
+    slack_ts_reference: message?.ts,
+  };
+
+  // Initialise kudos object
+  if (!kudosObject) {
+    await plantTreeAction(message);
+    await uploadKudosObjectToS3Bucket(
+      kudosObjectKey,
+      kudosCountObject,
+      s3Bucket,
+      bucketName,
+    );
+    return;
+  }
+
+  const objectString = await getObjectFromS3Bucket(
+    kudosObjectKey,
+    s3Bucket,
+    bucketName,
+  );
+  const object = JSON.parse(objectString || "{}");
+
+  if (message?.ts === object?.slack_ts_reference) {
+    return;
+  }
+
+  if (!isSameMonth(currentDate, new Date(object?.date))) {
+    await plantTreeAction(message);
+    await uploadKudosObjectToS3Bucket(
+      kudosObjectKey,
+      kudosCountObject,
+      s3Bucket,
+      bucketName,
+    );
+    return;
+  }
+
+  if (object?.count < MONTHLY_TREE_BUDGET) {
+    await plantTreeAction(message);
+    await uploadKudosObjectToS3Bucket(
+      kudosObjectKey,
+      { ...kudosCountObject, count: object?.count + 1 },
+      s3Bucket,
+      bucketName,
+    );
+  }
+
+  if (object?.count >= MONTHLY_TREE_BUDGET) {
+    await treeLimitAction(say);
+  }
 };

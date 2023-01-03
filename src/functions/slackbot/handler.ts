@@ -1,20 +1,22 @@
-import { BotMessageEvent } from "@slack/bolt";
-import { app, awsLambdaReceiver } from "../../utils/slack-app";
+import { BotMessageEvent, KnownEventFromType } from "@slack/bolt";
+import dotenv from "dotenv";
 import {
   APIGatewayProxyEvent,
   APIGatewayProxyResult,
   Callback,
 } from "aws-lambda";
-import { getCredits } from "../../api/more-trees";
-import { HR_BOT_USER_ID } from "src/utils/constants";
+import AWS from "aws-sdk";
+import { HR_BOT_USER_ID, S3_BUCKET_NAME } from "src/utils/constants";
 import {
   carbonAction,
   creditsAction,
   defaultAction,
   forestAction,
-  plantTreeAction,
-  treeLimitAction,
+  kudosMessageAction,
 } from "src/utils/actions";
+import { app, awsLambdaReceiver } from "src/utils/slack-app";
+
+dotenv.config();
 
 app.command("/treeumph", async ({ command, ack, say }) => {
   await ack();
@@ -45,12 +47,11 @@ app.message(async ({ message, say }) => {
     ) || [];
   if (botMessage.user === HR_BOT_USER_ID && bobAttachment.length) {
     if (bobAttachment[0]?.pretext?.startsWith("New Shoutout from")) {
-      const credits = await getCredits();
-      if (credits) {
-        await plantTreeAction(message);
-      } else {
-        await treeLimitAction(say);
-      }
+      const s3 = new AWS.S3({
+        accessKeyId: process.env.IAM_ACCESS_KEY_ID,
+        secretAccessKey: process.env.IAM_ACCESS_SECRET,
+      });
+      await kudosMessageAction(s3, S3_BUCKET_NAME, message, say);
     }
   }
 });
