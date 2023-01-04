@@ -1,4 +1,4 @@
-import { BotMessageEvent, KnownEventFromType } from "@slack/bolt";
+import { BotMessageEvent } from "@slack/bolt";
 import dotenv from "dotenv";
 import {
   APIGatewayProxyEvent,
