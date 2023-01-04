@@ -42,7 +42,6 @@ app.command("/treeumph", async ({ command, ack, say }) => {
 
 app.message(async ({ message, say }) => {
   const botMessage = message as BotMessageEvent;
-  console.log(botMessage);
   const bobAttachment =
     botMessage?.attachments?.filter(
       (attachment) => attachment.footer === "bob Slack Integration",
