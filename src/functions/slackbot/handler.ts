@@ -42,11 +42,12 @@ app.command("/treeumph", async ({ command, ack, say }) => {
 
 app.message(async ({ message, say }) => {
   const botMessage = message as BotMessageEvent;
+  console.log(botMessage);
   const bobAttachment =
     botMessage?.attachments?.filter(
       (attachment) => attachment.footer === "bob Slack Integration",
     ) || [];
-  if (botMessage.user === HR_BOT_USER_ID && bobAttachment.length) {
+  if (botMessage.bot_id === HR_BOT_USER_ID && bobAttachment.length) {
     if (bobAttachment[0]?.pretext?.startsWith("New Shoutout from")) {
       const s3 = new AWS.S3();
       await kudosMessageAction(s3, S3_BUCKET_NAME, message, say);
