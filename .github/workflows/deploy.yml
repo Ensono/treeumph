@@ -8,10 +8,6 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    env:
-      - SLACK_SIGNING_SECRET: ${{ secrets.SLACK_SIGNING_SECRET }}
-      - SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      - MORE_TREES_API_KEY: ${{ secrets.MORE_TREES_API_KEY }}
     permissions:
       id-token: write
       contents: read
