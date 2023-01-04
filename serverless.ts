@@ -23,7 +23,6 @@ const config: AWS = {
     environment: {
       SLACK_SIGNING_SECRET: `${process.env.SLACK_SIGNING_SECRET}`,
       SLACK_BOT_TOKEN: `${process.env.SLACK_BOT_TOKEN}`,
-      HR_BOT_USER_ID: `${process.env.HR_BOT_USER_ID}`,
       MORE_TREES_API_KEY: `${process.env.MORE_TREES_API_KEY}`,
       NODE_OPTIONS: "--enable-source-maps --stack-trace-limit=1000",
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
