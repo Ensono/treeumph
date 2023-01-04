@@ -25,7 +25,7 @@ const getForestMessage = (
   quantity_gifted: number,
   quantity_planted: number,
 ) => {
-  return `${TREE_EMOJI} ${COMPANY_NAME} have planted ${
+  return `${TREE_EMOJI} ${COMPANY_NAME} has planted ${
     quantity_planted + quantity_gifted
   } trees. View our virtual forest here: ${forest_url} ${TREE_EMOJI}`;
 };
@@ -43,7 +43,7 @@ export const carbonAction = async (say: SayFn) => {
   if (res) {
     const { data } = res;
     await say(
-      `${TREE_EMOJI} ${COMPANY_NAME} have offset ${
+      `${TREE_EMOJI} ${COMPANY_NAME} has offset ${
         Math.ceil(data.total_carbon_offset * 100) / 100
       }t of carbon ${TREE_EMOJI}`,
     );
@@ -53,7 +53,7 @@ export const carbonAction = async (say: SayFn) => {
 export const creditsAction = async (say: SayFn) => {
   const credits = await getCredits();
   await say(
-    `${TREE_EMOJI} ${COMPANY_NAME} have ${credits} credits left to plant trees ${TREE_EMOJI}`,
+    `${TREE_EMOJI} ${COMPANY_NAME} has ${credits} credits left to plant trees ${TREE_EMOJI}`,
   );
 };
 
