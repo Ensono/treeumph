@@ -25,9 +25,19 @@ const getForestMessage = (
   quantity_gifted: number,
   quantity_planted: number,
 ) => {
-  return `${TREE_EMOJI} ${COMPANY_NAME} has planted ${
-    quantity_planted + quantity_gifted
-  } trees. View our virtual forest here: ${forest_url} ${TREE_EMOJI}`;
+  const totalTrees = quantity_gifted + quantity_planted;
+
+  const treeArray = Array(totalTrees).fill(TREE_EMOJI);
+  const lineLength = 5;
+  let treeOutput = "";
+  for (let i = 0; i < treeArray.length; i += lineLength) {
+    treeOutput += treeArray.slice(i, i + lineLength).join("") + "\n";
+  }
+
+  return `${COMPANY_NAME} has planted ${totalTrees} trees.
+  \nHere is our forest, that you helped plant, in emoji form:
+  \n\n${treeOutput}
+  \n\nYou can also view our virtual forest on MoreTrees here: ${forest_url}`;
 };
 
 export const forestAction = async (say: SayFn) => {
